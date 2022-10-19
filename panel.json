@@ -1,0 +1,102 @@
+{
+    "datasource": {
+      "type": "alexanderzobnin-zabbix-datasource",
+      "uid": "s-w9t-I4k"
+    },
+    "fieldConfig": {
+      "defaults": {
+        "color": {
+          "mode": "thresholds"
+        },
+        "mappings": [],
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            {
+              "color": "green",
+              "value": null
+            },
+            {
+              "color": "red",
+              "value": 80
+            }
+          ]
+        }
+      },
+      "overrides": []
+    },
+    "gridPos": {
+      "h": 8,
+      "w": 12,
+      "x": 0,
+      "y": 8
+    },
+    "id": 3,
+    "options": {
+      "colorMode": "value",
+      "graphMode": "area",
+      "justifyMode": "auto",
+      "orientation": "auto",
+      "reduceOptions": {
+        "calcs": [
+          "lastNotNull"
+        ],
+        "fields": "",
+        "values": false
+      },
+      "textMode": "auto"
+    },
+    "pluginVersion": "9.2.0",
+    "targets": [
+      {
+        "application": {
+          "filter": ""
+        },
+        "datasource": {
+          "type": "alexanderzobnin-zabbix-datasource",
+          "uid": "s-w9t-I4k"
+        },
+        "functions": [],
+        "group": {
+          "filter": "Linux servers"
+        },
+        "host": {
+          "filter": "HOST_NAME"
+        },
+        "item": {
+          "filter": "cert_check"
+        },
+        "itemTag": {
+          "filter": ""
+        },
+        "options": {
+          "disableDataAlignment": false,
+          "showDisabledItems": false,
+          "skipEmptyValues": false,
+          "useZabbixValueMapping": false
+        },
+        "proxy": {
+          "filter": ""
+        },
+        "queryType": "0",
+        "refId": "A",
+        "resultFormat": "time_series",
+        "table": {
+          "skipEmptyValues": false
+        },
+        "tags": {
+          "filter": ""
+        },
+        "trigger": {
+          "filter": ""
+        },
+        "triggers": {
+          "acknowledged": 2,
+          "count": true,
+          "minSeverity": 3
+        }
+      }
+    ],
+    "title": "HOST_NAME",
+    "type": "stat"
+  }
