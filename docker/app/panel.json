@@ -1,0 +1,157 @@
+{
+  "datasource": {
+    "type": "alexanderzobnin-zabbix-datasource",
+    "uid": "s-w9t-I4k"
+  },
+  "description": "",
+  "fieldConfig": {
+    "defaults": {
+      "color": {
+        "mode": "thresholds"
+      },
+      "mappings": [
+        {
+          "options": {
+            "from": 31,
+            "result": {
+              "color": "dark-green",
+              "index": 0
+            },
+            "to": 365
+          },
+          "type": "range"
+        },
+        {
+          "options": {
+            "from": 11,
+            "result": {
+              "color": "dark-orange",
+              "index": 1
+            },
+            "to": 30
+          },
+          "type": "range"
+        },
+        {
+          "options": {
+            "from": 0,
+            "result": {
+              "color": "dark-red",
+              "index": 2
+            },
+            "to": 10
+          },
+          "type": "range"
+        }
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "unit": "none"
+    },
+    "overrides": []
+  },
+  "gridPos": {
+    "h": 3,
+    "w": 3,
+    "x": 0,
+    "y": 20
+  },
+  "id": 54,
+  "options": {
+    "colorMode": "background",
+    "graphMode": "area",
+    "justifyMode": "auto",
+    "orientation": "auto",
+    "reduceOptions": {
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": "",
+      "values": false
+    },
+    "textMode": "auto"
+  },
+  "pluginVersion": "8.3.4",
+  "targets": [
+    {
+      "alias": "",
+      "application": {
+        "filter": ""
+      },
+      "bucketAggs": [
+        {
+          "field": "@t",
+          "id": "2",
+          "settings": {
+            "interval": "auto"
+          },
+          "type": "date_histogram"
+        }
+      ],
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "s-w9t-I4k"
+      },
+      "functions": [],
+      "group": {
+        "filter": "Linux servers"
+      },
+      "host": {
+        "filter": "HOST_NAME"
+      },
+      "item": {
+        "filter": "cert_check"
+      },
+      "itemTag": {
+        "filter": ""
+      },
+      "metrics": [
+        {
+          "id": "1",
+          "type": "count"
+        }
+      ],
+      "options": {
+        "disableDataAlignment": false,
+        "showDisabledItems": false,
+        "skipEmptyValues": false,
+        "useZabbixValueMapping": false
+      },
+      "proxy": {
+        "filter": ""
+      },
+      "query": "",
+      "queryType": "0",
+      "refId": "A",
+      "resultFormat": "time_series",
+      "table": {
+        "skipEmptyValues": false
+      },
+      "tags": {
+        "filter": ""
+      },
+      "timeField": "@t",
+      "trigger": {
+        "filter": ""
+      },
+      "triggers": {
+        "acknowledged": 2,
+        "count": true,
+        "minSeverity": 3
+      }
+    }
+  ],
+  "title": "HOST_NAME",
+  "type": "stat"
+}
