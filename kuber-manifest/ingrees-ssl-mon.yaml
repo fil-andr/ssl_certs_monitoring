@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1 
+kind: Ingress
+metadata:
+  name: ssl-monitoring
+  namespace: default
+spec:
+  rules:
+  - host: ssl-monitoring.com
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: /ssl-certs-monitoring
+        backend:
+          service:
+            name: ssl-monitoring
+            port:
+              number: 80

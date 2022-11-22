@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ssl-monitoring
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: ssl-mon
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: ssl-mon
+    spec:
+      containers:
+        - image: 239534/ssl-cert-monitor:1.0
+          resources:
+            requests:
+              memory: "20Mi"
+          imagePullPolicy: IfNotPresent
+          name: ssl-monitoring
+          env:
+          - name: GRAFANA_APIKEY
+            value: 'eyJrIjoidWRrZXhQRjF0dTIzNjgzZ0lrcmFiWUtlSFZrUnl6aXIiLCJuIjoidGVzdCIsImlkIjoxfQ=='
+          - name: ZABBIX_PASSWD
+            value: 'zabbix'
+          ports:
+            - containerPort: 8080

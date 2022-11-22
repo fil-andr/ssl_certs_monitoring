@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssl-monitoring
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: ssl-mon
+  ports:
+  - port: 8080
+    protocol: TCP
