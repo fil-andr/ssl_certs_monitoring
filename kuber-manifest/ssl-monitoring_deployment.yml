@@ -1,6 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+annotations:
+  vault.security.banzaicloud.io/vault-addr: http://192.168.1.10:8200
+  vault.security.banzaicloud.io/vault-path: kubernetes
+  vault.security.banzaicloud.io/vault-role: test_role
+  vault.security.banzaicloud.io/vault-skip-verify: true
   name: ssl-monitoring
   namespace: default
 spec:
@@ -27,8 +32,8 @@ spec:
           name: ssl-monitoring
           env:
           - name: GRAFANA_APIKEY
-            value: 'eyJrIjoidWRrZXhQRjF0dTIzNjgzZ0lrcmFiWUtlSFZrUnl6aXIiLCJuIjoidGVzdCIsImlkIjoxfQ=='
+            value: vault:kv/data/grafana/#apikey
           - name: ZABBIX_PASSWD
-            value: 'zabbix'
+            value: vault:kv/data/zabbix#api_zabbix
           ports:
             - containerPort: 8080
