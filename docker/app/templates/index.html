@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %} SSL monitoring</title>
+	<h1>SSL certs add to monitoring</h1>
+	    <style>
+        .alert {
+            padding: 20px;
+            margin: 5px;
+            color: #970020;
+            background-color: #ffd5de;
+        }
+
+        </style>
+</head>
+<body>
+    <nav>
+        <a href="http://app-efr053:3000/d/qx5YAfk4k/api-ssl-certificate-expired-time?orgId=1"> Grafana dashboard </a>
+		<br>
+        <a href="http://app-zabbix03.open.ru/hosts.php?filter_templates%5B%5D=10488&filter_host=&filter_dns=&filter_ip=&filter_port=&filter_monitored_by=0&filter_evaltype=0&filter_tags%5B0%5D%5Btag%5D=&filter_tags%5B0%5D%5Boperator%5D=0&filter_tags%5B0%5D%5Bvalue%5D=&filter_set=1"> Zabbix </a>
+    </nav>
+    <hr>
+    <div class="content">
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				{% for message in messages %}
+					<div class="alert">{{ message }}</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+    <form method="post">
+		<br>
+		<br>
+        <label for="title">Ip or hostname</label>
+        <br>
+        <input type="text" name="ip"
+               placeholder="example.com"
+               value="{{ request.form['ip'] }}"></input>
+        <br>
+		<br>
+        <label for="content">Port</label>
+		<br>
+        <input type="number" name="port"
+               placeholder="port"
+               value="{{ request.form['port'] }}"></input>
+        <br>
+		<br>
+        <button type="submit">OK</button>
+    </form>
+    </div>
+</body>
+</html>

@@ -3,24 +3,23 @@ import json
 import os
 import requests
 from flask import request
-from flask import Flask
+from flask import Flask,render_template, request, flash
 import urllib
 
 grafana_apikey = os.environ['GRAFANA_APIKEY']
-grafana_server = '192.168.1.61:3000'
-dashboard_uid = 'yZYuxYIVz'
-panel_file = f'{os.path.dirname(__file__)}\panel.json'
+grafana_server = 'app-efr053.open.ru:3000'
+dashboard_uid = 'qx5YAfk4k'
+panel_file = f'{os.path.dirname(__file__)}/panel.json'
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder=r'/app/templates')
 
-
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 def connect_to_zabbix_server():
-    zabbix_server = 'http://192.168.1.10'
-    zabbix_user = 'Admin'
+    zabbix_server = 'http://app-zabbix03.open.ru'
+    zabbix_user = 'api_zabbix'
     zabbix_passw = os.environ['ZABBIX_PASSWD']
-
-    zapi = ZabbixAPI(url=f'{zabbix_server}/zabbix/', user=zabbix_user, password=zabbix_passw)
+    zapi = ZabbixAPI(url=zabbix_server, user=zabbix_user, password=zabbix_passw)
     return zapi
 
 #####zabbix part
@@ -32,10 +31,10 @@ def zabbix_create_host(host, ssl_port, zab_obj):
             {
                 "type": 1,
                 "main": 1,
-                "useip": 1,
+                "useip": 0,
                 "ip": "127.0.0.1",
-                "dns": "",
-                "port": "10050"
+                "dns": "app-zabbix03.open.ru",
+                "port": "10060"
             }
         ],
         "groups": [
@@ -45,7 +44,7 @@ def zabbix_create_host(host, ssl_port, zab_obj):
         ],
         "templates": [
             {
-                "templateid": "10273"
+                "templateid": "10488"
             }
         ],
         "macros": [
@@ -60,7 +59,8 @@ def zabbix_create_host(host, ssl_port, zab_obj):
         ]
     }
 
-    # Create ZabbixAPI class instance
+
+
     # create host
     zabbix_response = zab_obj.do_request(method="host.create",params=host_tamplate)
 
@@ -110,45 +110,45 @@ def create_panel_in_dashboard(data):
 #create_panel_in_dashboard()
 
 
-@app.route('/ssl-certs-monitoring')
+@app.route('/ssl-certs-monitoring', methods=('GET', 'POST'))
 def ssl_monitor():
-    # here we want to get the value of user (i.e. ?user=some-value)
-    host = request.args.get('host')
-    ssl_port = request.args.get('port')
+    if request.method == 'POST':
+        host = request.form['ip']
+        ssl_port = request.form['port']
+        if not host:
+            flash('host is required!')
+        elif not ssl_port:
+            flash('port is required!')
+        else: 
+            ##coonect to zabbix server
+            zab_obj = connect_to_zabbix_server()
 
-    ##coonect to zabbix server
-    try:
-        zab_obj = connect_to_zabbix_server()
-    except urllib.error.URLError as e:
-        return str(e)
+            #### create host in zabbix
+            try:
+                zab_response = zabbix_create_host(host, ssl_port, zab_obj)
+            except ZabbixAPIException as e:
+                return str(e)
 
-    #### create host in zabbix
-    try:
-        zab_response = zabbix_create_host(host, ssl_port, zab_obj)
-    except ZabbixAPIException as e:
-        return str(e)
+            ### get dashboard json
+            data = get_dashboard_json()
 
-    ### get dashboard json
-    data = get_dashboard_json()
+            ### id для новой панели
+            id_num = panel_id_num(data)
 
-    ### id для новой панели
-    id_num = panel_id_num(data)
+            ## modify panel template
+            panel = new_panel(panel_file, id_num, host)
 
-    ## modify panel template
-    panel = new_panel(panel_file, id_num, host)
+            ### add new pane to dashboard json
+            data["dashboard"]["panels"].append(panel)
 
-    ### add new pane to dashboard json
-    data["dashboard"]["panels"].append(panel)
+            ### post request to grafana API create new panel
+            post_result = create_panel_in_dashboard(data)
+            if post_result.status_code == 200:
+                return f"host and panel for {host} successfully added to grafana status: {post_result.json()['status']},  zabbix response {zab_response}"
+            else:
+                return f"something wrong, status code {post_result.status_code}, zabbix response {post_result.json()}"
 
-    ### post request to grafana API create new panel
-    post_result = create_panel_in_dashboard(data)
-    if post_result.status_code == 200:
-        return f"host and panel for {host} successfully added to grafana status: {post_result.json()['status']},  zabbix response {zab_response}"
-    else:
-        return f"something wrong, status code {post_result.status_code}, zabbix response {post_result.json()}"
-
-
-
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=8080)
