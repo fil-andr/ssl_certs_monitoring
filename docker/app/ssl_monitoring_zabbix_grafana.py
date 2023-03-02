@@ -17,7 +17,7 @@ app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 def connect_to_zabbix_server():
     zabbix_server = 'http://192.168.1.10'
-    zabbix_user = 'api_zabbix'
+    zabbix_user = 'Admin'
     zabbix_passw = os.environ['ZABBIX_PASSWD']
     zapi = ZabbixAPI(url=zabbix_server, user=zabbix_user, password=zabbix_passw)
     return zapi
@@ -31,7 +31,7 @@ def zabbix_create_host(host, ssl_port, zab_obj):
             {
                 "type": 1,
                 "main": 1,
-                "useip": 0,
+                "useip": 1,
                 "ip": "127.0.0.1",
                 "dns": "",
                 "port": "10050"
